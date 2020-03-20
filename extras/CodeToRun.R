@@ -37,6 +37,7 @@ oncologyDatabaseSchema <- "oncology_database_schema.dbo" # Schema for Episode ta
 
 createCohortTable <- FALSE # Create cohort table for your cohort table
 createEpisodeAndEventTable <- TRUE # warning: existing table might be erased
+createTargetCohort = FALSE # Create target cohort ,i.e., 'colorectal cancer'
 
 episodeTable <- "episode_table"
 episodeEventTable <- "episode_event_table"
@@ -83,7 +84,7 @@ minimumRegimenChange <- 1 # Target patients for at least 1 regimen change
 surgeryCohortIds <- 42 # Colectomy
 eventCohortIds <- 45 # Neutropenia
 
-# ignore the event in range of +- treatmentEffectDates
+# ignore the event in range of +- treatmentEffectDates (To ignore temporary neutropenia caused by chemotherapy)
 treatmentEffectDates <- 2
 
 plots <- CancerTxPatterns(connectionDetails,
