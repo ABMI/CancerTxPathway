@@ -18,6 +18,8 @@ install.packages("tidyr")
 install.packages("networkD3")
 install.packages("ggbeeswarm")
 install.packages("flexdashboard")
+install.packages("grid")
+
 library(flexdashboard)
 
 # Details for connecting to the server:
@@ -59,11 +61,11 @@ executeExtraction(connectionDetails,
                   cohortTable,
                   maxCores = 4)
 
-
 outputFolder <- 'output folder path'
 outputFileTitle <- 'output file title'
 targetCohortIds <- c(4:11)
 episodeCohortCreate <- TRUE
+createEpisodeCohortTable <- FALSE
 minSubject <- 0 # under 0 patients are removed from plot
 
 # Usage Pattern graph

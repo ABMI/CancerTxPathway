@@ -94,6 +94,6 @@ treatmentIterationHeatmap<-function(heatmapPlotData,
   total <- unique(total)
   total$label<-paste0(total$cohortName,' \n','(n = ',total$sum,')')
   heatmapPlotData <- heatmapPlotData %>% subset(n >= minSubject)
-  h <- heatmapPlotData %>% highcharter::hchart(.,type="heatmap",hcaes(x = cycle,y=cohortName,value = ratio),dataLabels = list(allowOverlap = TRUE, enabled = TRUE,format = '{point.n}<br>{point.value}%'),align ='center') %>% hc_xAxis(max = maximumCycleNumber, tickInterval = 1) %>% hc_yAxis(title = list(text = 'Regimen')) %>% hc_colorAxis(stops = color_stops(ceiling(max(heatmapPlotData$ratio)),c("white","blue"))) %>% hc_tooltip(pointFormat = "Regimen: {point.y} <br> Cycle: {point.x} <br> Proportion: {point.value}%")
+  h <- heatmapPlotData %>% highcharter::hchart(.,type="heatmap",hcaes(x = cycle,y=cohortName,value = ratio),dataLabels = list(allowOverlap = TRUE, enabled = TRUE,format = '{point.n}<br>{point.value}%'),align ='center') %>% hc_xAxis(title = list(style = list(fontSize = 14)),max = maximumCycleNumber, tickInterval = 1,labels = list(style = list(fontSize = 14))) %>% hc_yAxis(title = list(text = 'Regimen',style = list(fontSize = 14)),labels = list(style = list(fontSize = 14))) %>% hc_colorAxis(stops = color_stops(ceiling(max(heatmapPlotData$ratio)),c("white","blue"))) %>% hc_tooltip(pointFormat = "Regimen: {point.y} <br> Cycle: {point.x} <br> Proportion: {point.value}%")
   return(h)
 }

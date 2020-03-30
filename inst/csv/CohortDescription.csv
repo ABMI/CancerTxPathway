@@ -40,4 +40,15 @@ cohortDefinitionId,cohortName,type,conceptId
 42,Colectomy,Surgery,
 43,Mastectomy,Surgery,
 44,Lung excision,Surgery,
-45,ANCUnder2000,event,WBC * Neutrophil %
+45,ANCUnder2000,event,
+46,Tamoxifen monotherapy,breast cancer regimen,35804221
+47,Toremifene monotherapy,breast cancer regimen,35804279
+48,Letrozole monotherapy,breast cancer regimen,35804273
+50,Anastrozole monotherapy,breast cancer regimen,35804271
+51,Erlotinib monotherapy,lung cancer regimen,35804271
+52,Afatinib monotherapy,lung cancer regimen,35804271
+53,Osimertinib monotherapy,lung cancer regimen,35804271
+54,Crizotinib monotherapy,lung cancer regimen,35804271
+55,Ceritinib monotherapy,lung cancer regimen,35804271
+56,Pembrolizumab monotherapy,lung cancer regimen,35804271
+57,Nivolumab monotherapy,lung cancer regimen,35804271

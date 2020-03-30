@@ -173,5 +173,5 @@ CancerTxPatterns<-function(connectionDetails,
   rmarkdown::render(pathToRmd,"flex_dashboard",output_dir = outputFolder,output_file = paste0(outputFileTitle,'.','html'),
                     params = list(outputFolder = outputFolder,
                                   outputFileTitle = outputFileTitle,
-                                  maximumCycleNumber = maximumCycleNumber, minSubject = minSubject),clean = TRUE)
+                                  maximumCycleNumber = maximumCycleNumber, minSubject = minSubject,fromYear = fromYear,toYear = toYear),clean = TRUE)
   return(list(usageGraph,heatmap,treatmentPathway,cycleIncidencePlot,incidenceDatePlot))}

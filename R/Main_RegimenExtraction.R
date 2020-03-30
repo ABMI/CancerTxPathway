@@ -61,7 +61,7 @@ executeExtraction <- function(connectionDetails,
   pathToCsv <- system.file("csv", "RegimenConceptId.csv", package = "CancerTxPathway")
   regimenConceptId <- read.csv(pathToCsv)
 
-  ## create the episode table and episode event table
+  ## create the episode table and episode event table in database
   if(createEpisodeAndEventTable == TRUE){
 
     connection <- DatabaseConnector::connect(connectionDetails = connectionDetails)
