@@ -66,7 +66,7 @@ treatmentPathway<-function(connectionDetails,
                                cohortTable,
                                eventCohortIds)
     eventCohort<-dplyr::left_join(eventCohort,cohortDescript, by= c("cohortDefinitionId"="cohortDefinitionId"))
-    if(!is.null(conditionCohortIds)){eventCohort<-eventCohort %>% subset(subjectId %in% conditionCohort$subjectId)}
+    if(!is.null(conditionCohortIds)){eventCohort <- eventCohort %>% subset(subjectId %in% conditionCohort$subjectId)}
     colnames(eventCohort) <- colnames(cohortData)
     eventCohort$cohortStartDate<-as.Date(eventCohort$cohortStartDate)
     eventCohort$cohortEndDate<-as.Date(eventCohort$cohortEndDate)}

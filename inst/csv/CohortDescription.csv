@@ -45,10 +45,10 @@ cohortDefinitionId,cohortName,type,conceptId
 47,Toremifene monotherapy,breast cancer regimen,35804279
 48,Letrozole monotherapy,breast cancer regimen,35804273
 50,Anastrozole monotherapy,breast cancer regimen,35804271
-51,Erlotinib monotherapy,lung cancer regimen,35804271
-52,Afatinib monotherapy,lung cancer regimen,35804271
-53,Osimertinib monotherapy,lung cancer regimen,35804271
-54,Crizotinib monotherapy,lung cancer regimen,35804271
-55,Ceritinib monotherapy,lung cancer regimen,35804271
-56,Pembrolizumab monotherapy,lung cancer regimen,35804271
-57,Nivolumab monotherapy,lung cancer regimen,35804271
+51,Erlotinib monotherapy,lung cancer regimen,35805229
+52,Afatinib monotherapy,lung cancer regimen,35804392
+53,Osimertinib monotherapy,lung cancer regimen,35804394
+54,Crizotinib monotherapy,lung cancer regimen,35806424
+55,Ceritinib monotherapy,lung cancer regimen,35804391
+56,Pembrolizumab monotherapy,lung cancer regimen,35803678
+57,Nivolumab monotherapy,lung cancer regimen,35803677

@@ -24,8 +24,8 @@
 #' @export theme_Publication
 #' @export scale_fill_Publication
 #' @export scale_colour_Publication
-theme_Publication <- function(base_size=14, base_family="helvetica") {
-  (theme_foundation(base_size=base_size, base_family=base_family)
+theme_Publication <- function(base_size=14) {
+  (theme_foundation(base_size=base_size)
     + theme(plot.title = element_text(face = "bold",
                                       size = rel(1.2), hjust = 0.5),
             text = element_text(),
@@ -45,7 +45,6 @@ theme_Publication <- function(base_size=14, base_family="helvetica") {
             legend.direction = "horizontal",
             legend.key.size= unit(0.2, "cm"),
             legend.title = element_blank(),
-            legend.margin = unit(0, "cm"),
             plot.margin=unit(c(10,5,5,5),"mm"),
             strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
             strip.text = element_text(face="bold")

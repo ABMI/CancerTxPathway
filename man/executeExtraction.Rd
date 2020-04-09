@@ -2,19 +2,18 @@
 % Please edit documentation in R/Main_RegimenExtraction.R
 \name{executeExtraction}
 \alias{executeExtraction}
-\title{Main}
+\title{Episode / Episode_event table generation for chemotherapy}
 \usage{
-executeExtraction(connectionDetails, oracleTempSchema = NULL,
-  cdmDatabaseSchema, cohortDatabaseSchema,
-  vocaDatabaseSchema = cdmDatabaseSchema,
-  oncologyDatabaseSchema = cdmDatabaseSchema,
-  createCohortTable = FALSE, createEpisodeAndEventTable = FALSE,
-  createTargetCohort = FALSE, episodeTable, episodeEventTable,
-  cohortTable, maxCores = 4)
+executeExtraction(connectionDetails, oracleTempSchema, cdmDatabaseSchema,
+  vocaDatabaseSchema = cdmDatabaseSchema, cohortDatabaseSchema,
+  oncologyDatabaseSchema, cohortTable, episodeTable, episodeEventTable,
+  includeConceptIdSetDescendant = TRUE, maxCores,
+  createCohortTable = FALSE, createEpisodeTable = FALSE,
+  generateTargetCohort = FALSE)
 }
 \value{
-Episode table, Episode Event table, cancer cohort
+Target Cohort, Episode, Episode Event
 }
 \description{
-Main
+Episode / Episode_event table generation for chemotherapy
 }

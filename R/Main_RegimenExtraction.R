@@ -13,96 +13,124 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#' Main
+
+#' Episode / Episode_event table generation for chemotherapy
 #' @param connectionDetails
 #' @param oracleTempSchema
 #' @param cdmDatabaseSchema
-#' @param cohortDatabaseSchema
 #' @param vocaDatabaseSchema
+#' @param cohortDatabaseSchema
 #' @param oncologyDatabaseSchema
-#' @param createCohortTable
-#' @param createEpisodeAndEventTable
+#' @param cohortTable
 #' @param episodeTable
 #' @param episodeEventTable
-#' @param cohortTable
+#' @param includeConceptIdSetDescendant
 #' @param maxCores
-#' @param createTargetCohort
-#' @keywords
-#' @return Episode table, Episode Event table, cancer cohort
+#' @param createCohortTable
+#' @param createEpisodeTable
+#' @param generateTargetCohort
+#' @return Target Cohort, Episode, Episode Event
 #' @examples
+
 #' @export executeExtraction
-#Main
 executeExtraction <- function(connectionDetails,
-                              oracleTempSchema = NULL,
+                              oracleTempSchema,
                               cdmDatabaseSchema,
-                              cohortDatabaseSchema,
                               vocaDatabaseSchema = cdmDatabaseSchema,
-                              oncologyDatabaseSchema = cdmDatabaseSchema,
-                              createCohortTable = FALSE,
-                              createEpisodeAndEventTable = FALSE,
-                              createTargetCohort = FALSE,
+                              cohortDatabaseSchema,
+                              oncologyDatabaseSchema,
+                              cohortTable,
                               episodeTable,
                               episodeEventTable,
-                              cohortTable,
-                              maxCores = 4
+                              includeConceptIdSetDescendant = TRUE,
+                              maxCores,
+                              createCohortTable = FALSE,
+                              createEpisodeTable = FALSE,
+                              generateTargetCohort = FALSE
 ){
-  ## create target cohorts
-  if(createTargetCohort){
-  createCohort(createCohortTable = createCohortTable,
-               connectionDetails = connectionDetails,
-               oracleTempSchema = oracleTempSchema,
-               cdmDatabaseSchema = cdmDatabaseSchema,
-               cohortDatabaseSchema = cohortDatabaseSchema,
-               vocaDatabaseSchema = vocaDatabaseSchema,
-               cohortTable = cohortTable,
-               includeConceptIdSetDescendant = TRUE
-  )}
 
-  pathToCsv <- system.file("csv", "RegimenConceptId.csv", package = "CancerTxPathway")
-  regimenConceptId <- read.csv(pathToCsv)
+  # DB connection_1
+  connection <- DatabaseConnector::connect(connectionDetails = connectionDetails)
 
-  ## create the episode table and episode event table in database
-  if(createEpisodeAndEventTable == TRUE){
+  ###################
+  ## Target Cohort ##
+  ###################
 
-    connection <- DatabaseConnector::connect(connectionDetails = connectionDetails)
-    ParallelLogger::logInfo("Creating table for the episode")
-    sql <- SqlRender::loadRenderTranslateSql(sqlFilename= "CreateEpisodeTable.sql",
-                                             packageName = "CancerTxPathway",
-                                             dbms = attr(connection,"dbms"),
-                                             oracleTempSchema = oracleTempSchema,
-                                             oncology_database_schema = oncologyDatabaseSchema,
-                                             episode_table = episodeTable)
-    DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverallTime = TRUE)
-    ParallelLogger::logInfo("Creating table for the episode_event")
-    sql <- SqlRender::loadRenderTranslateSql(sqlFilename= "CreateEpisodeEventTable.sql",
-                                             packageName = "CancerTxPathway",
-                                             dbms = attr(connection,"dbms"),
-                                             oracleTempSchema = oracleTempSchema,
-                                             oncology_database_schema = oncologyDatabaseSchema,
-                                             episode_event_table = episodeEventTable)
-    DatabaseConnector::executeSql(connection, sql, progressBar = TRUE, reportOverallTime = TRUE)
+  # Create cohort table
+  if(createCohortTable){
+    createCohortTable(connection,
+                      oracleTempSchema,
+                      cohortDatabaseSchema,
+                      cohortTable)
+  }
+
+  # Generate target cohort
+  if(generateTargetCohort){
+    TargetCohortGeneration(connection,
+                           oracleTempSchema,
+                           cdmDatabaseSchema,
+                           vocaDatabaseSchema,
+                           cohortDatabaseSchema,
+                           cohortTable,
+                           includeConceptIdSetDescendant)
+  }
+
+  # DB disconnection_1
+  DatabaseConnector::disconnect(connection)
+
+  ###################
+  ## Episode Table ##
+  ###################
+
+  # DB connection_2
+  connection <- DatabaseConnector::connect(connectionDetails = connectionDetails)
+
+  # Create Episode table, Episode_event
+  if(createEpisodeTable){
+    createEpisodeTable(connection,
+                       oracleTempSchema,
+                       oncologyDatabaseSchema,
+                       episodeTable,
+                       episodeEventTable)
+  }
+
+  # DB disconnection_2
+  DatabaseConnector::disconnect(connection)
+
+  # Load regimen Concept_Id for Target Cohort (Cohort_Definition_Id)
+  pathToCsv <- system.file("csv", "Info_TargetRegimen.csv", package = "CancerTxPathway")
+  regimenInfo <- read.csv(pathToCsv)
+
+  # DB connection_3
+  connection <- DatabaseConnector::connect(connectionDetails = connectionDetails)
+
+  # Extract Episode / Episode_event table
+  for(i in 1:nrow(regimenInfo)){
+
+    # Load target Cohort_Definition_Id, List for Regimen_Concept_Id
+    targetCohortId <- regimenInfo$targetCohortId[i]
+    targetRegimenConceptIds <- strsplit(as.character(regimenInfo$regimenConceptIds),';')[[i]]
+
+    # JSON parameters to List form
+    parameters <- parameterSetting(targetRegimenConceptIds)
+
+    # Generate Episode / Episode_event table
+    episodes <- generateEpisode(parameters,
+                                connection,
+                                cohortTable,
+                                cdmDatabaseSchema,
+                                cohortDatabaseSchema,
+                                targetCohortId,
+                                maxCores)
+
+    # Insert Episode / Episode_event table to DB
+    insertEpisode(connection,
+                  oncologyDatabaseSchema,
+                  episodeTable,
+                  episodeEventTable,
+                  episodes)
+
+    # DB disconnection_3
     DatabaseConnector::disconnect(connection)
   }
-
-  ## episode table and episode event generation:
-  for(i in 1:nrow(regimenConceptId)){
-    targetCohortId <- regimenConceptId$targetCohortId[i]
-    targetRegimenConceptIds <- strsplit(as.character(regimenConceptId$regimenConceptIds),';')[[i]]
-    episodeAndEpisodeEvent <- generateEpisodeTable(targetRegimenConceptIds = targetRegimenConceptIds,
-                                                   connectionDetails = connectionDetails,
-                                                   cohortTable =cohortTable,
-                                                   cdmDatabaseSchema = cdmDatabaseSchema,
-                                                   cohortDatabaseSchema = cohortDatabaseSchema,
-                                                   targetCohortId = targetCohortId,
-                                                   maxCores = maxCores)
-
-    ## Insert episode colorectal table to database:
-    insertEpisodeToDatabase(connectionDetails = connectionDetails,
-                            oncologyDatabaseSchema = oncologyDatabaseSchema,
-                            episodeTable = episodeTable,
-                            episodeEventTable = episodeEventTable,
-                            episodeAndEpisodeEvent = episodeAndEpisodeEvent)
-  }
-
-
 }
